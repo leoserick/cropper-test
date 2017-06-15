@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.4.1/croppie.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,700" rel="stylesheet">
+</head>
+<body>
+  <style>
+  /* Estilos indispensables */
+    .croppie-container .cr-boundary{
+      height: 320px;
+      max-width:400px;
+      margin: 0 auto;
+    }
+	/* Estilos para hacer el demo visualmente atractivo */
+		html, body {
+			font-family: 'Roboto', sans-serif;
+			text-align: center;
+			height: 100%;
+			background-color: #446455;
+		}
+		h1,h2 {
+			color: white;
+			letter-spacing: 1px;
+		}
+		h2 {
+			font-weight: 100;
+		}
+	  .demo-container {
+	  	display: flex;
+	    align-items: center;
+	    justify-content: space-between;
+	    flex-wrap: wrap;
+	    height: 100%;
+	  }
+	  .upload-container, .upload-demo-wrap, .result-container {
+			display: flex;
+	    flex-direction: column;
+	    justify-content: center;
+	    align-items: center;
+	    width: 33%;
+	    min-height: 400px;
+	  }
+	  button {
+	  	font-size: 16px;
+	    padding: 16px 24px 15px 24px;
+	    background-color: transparent;
+	    border: 2px solid #fdd262;
+	    color: #fdd262;
+	  }
+	  .custom-file-input::-webkit-file-upload-button {
+		  visibility: hidden;
+		}
+		.custom-file-input::before {
+		  content: 'Selecciona una foto';
+		  display: inline-block;
+		  background-color: #446455;
+		  border: 2px solid #fdd262;
+		  padding: 16px 24px 15px 24px;
+		  font-size: 16px;
+		  color: #fdd262;
+		  outline: none;
+		  white-space: nowrap;
+		  -webkit-user-select: none;
+		  cursor: pointer;
+		}
+		.custom-file-input:hover::before {
+		  border-color: #fdd262;
+		}
+		.custom-file-input:active::before {
+		  background: transparent;
+		}
+		img {
+			margin-top: 16px;
+		}
+  </style>
+	
+   <h1>Recortador de imagen</h1>
+    <!-- or even simpler -->
+
+	<div class="demo-container">
+		<!-- Boton para subir el archivo -->
+		<div class="upload-container">
+			<h2>Sube una foto para poderla recortar</h2>
+      <input type="file" id="upload" value="Choose a file" accept="image/*" class="custom-file-input"/>
+		</div>
+	  <!-- Contenedor del Cropper -->
+		<div class="upload-demo-wrap">
+		  <div id="upload-demo"></div>
+		</div>
+		<!-- Imagen resultado -->
+		<div class="result-container">
+			<h2>Presiona el boton para ver el resultado del recorte</h2>
+			<button class="upload-result">Result</button>
+			<img id="imgResult" src="" alt="">
+		</div>
+	</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.4.1/croppie.min.js"></script>
+  <script>
+    function demoUpload() {
+		var $uploadCrop;
+
+		$('#upload').on('change', function () {console.log("leer"); readFile(this); });
+		function readFile(input) {
+      
+ 			if (input.files && input.files[0]) {
+	            var reader = new FileReader();
+	            
+	            reader.onload = function (e) {
+					$('.upload-demo').addClass('ready');
+	            	$uploadCrop.croppie('bind', {
+	            		url: e.target.result
+	            	}).then(function(){
+	            		console.log('jQuery bind complete');
+	            	});
+	            	
+	            }
+	            
+	            reader.readAsDataURL(input.files[0]);
+	        }
+	        else {
+		        alert("Sorry - you're browser doesn't support the FileReader API");
+		    }
+		}
+
+		$uploadCrop = $('#upload-demo').croppie({
+			viewport: {
+				width: 250,
+				height: 250,
+				type: 'circle'
+			},
+			enableExif: true
+		});
+
+		$('.upload-result').on('click', function (ev) {
+			$uploadCrop.croppie('result', {
+				type: 'canvas',
+				size: 'viewport'
+			}).then(function (resp) {
+				console.log(resp);
+				document.getElementById('imgResult').src = resp;
+			});
+		});
+	}
+    demoUpload();
+  </script>
+</body>
+</html>
